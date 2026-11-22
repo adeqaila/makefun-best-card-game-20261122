@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ember Throne — A Duel of the Four Courts</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div id="stage">
+  <div id="rival-bar" class="bar"></div>
+  <div id="rival-hand" class="hand-row"></div>
+  <div id="rival-table" class="table-row"></div>
+  <div id="mid-bar">
+    <div id="log" aria-live="polite"></div>
+    <div id="turn-label">Your turn</div>
+    <button id="end-turn" type="button">End Turn</button>
+  </div>
+  <div id="player-table" class="table-row"></div>
+  <div id="player-hand" class="hand-row"></div>
+  <div id="player-bar" class="bar"></div>
+
+  <div id="banner" aria-hidden="true"></div>
+
+  <div id="title-screen" class="overlay">
+    <div class="title-panel">
+      <div class="title-kicker">A DUEL OF THE FOUR COURTS</div>
+      <h1 class="title">EMBER<br>THRONE</h1>
+      <div id="title-cards" class="title-cards"></div>
+      <p class="title-blurb">Outwit the Hollow Queen. Spend mana, play cards from the four
+        courts — Ember, Tide, Thorn and Star — and bring her life to zero
+        before she brings yours to zero.</p>
+      <div class="howto">
+        <div><b>Play a card</b> — click it in your hand (it costs mana).</div>
+        <div><b>Attack</b> — click one of your ready minions, then an enemy minion or her portrait.</div>
+        <div><b>Taunt</b> must be attacked first. <b>Venom</b> destroys what it wounds.</div>
+        <div><b>E</b> ends your turn · <b>Esc</b> cancels a selection.</div>
+      </div>
+      <button id="start-btn" type="button">Begin the Duel</button>
+      <div id="best-line" class="best-line"></div>
+    </div>
+  </div>
+
+  <div id="end-screen" class="overlay hidden">
+    <div class="title-panel">
+      <h1 id="end-title" class="end-title win">VICTORY</h1>
+      <p id="end-text" class="title-blurb"></p>
+      <div id="end-stats" class="end-stats"></div>
+      <button id="again-btn" type="button">Play Again</button>
+    </div>
+  </div>
+</div>
+<p id="status" role="status" aria-live="polite"></p>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

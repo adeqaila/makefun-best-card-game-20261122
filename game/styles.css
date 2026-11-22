@@ -1,0 +1,218 @@
+/* Ember Throne — table, cards, heroes, overlays. All art is CSS: no images, no network. */
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0817; }
+body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #f2ead8; }
+#status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+#stage {
+  position: fixed; left: 50%; top: 50%; width: 1280px; height: 800px;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  background:
+    radial-gradient(ellipse 900px 500px at 50% 46%, #17603f 0%, #0f3d2e 55%, #0a2a1f 100%);
+  border: 3px solid #c9a227;
+  border-radius: 18px;
+  box-shadow: inset 0 0 120px rgba(0,0,0,.55), 0 0 60px rgba(0,0,0,.6);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* --- bars: heroes ------------------------------------------------------ */
+.bar { height: 72px; display: flex; align-items: center; gap: 16px; padding: 0 18px; flex: none; }
+#rival-bar { background: linear-gradient(180deg, rgba(10,6,26,.75), rgba(10,6,26,0)); }
+#player-bar { background: linear-gradient(0deg, rgba(10,6,26,.75), rgba(10,6,26,0)); }
+.hero-panel {
+  display: flex; align-items: center; gap: 12px; flex: 1;
+  background: #1d1836; border: 2px solid #3a3160; border-radius: 12px; padding: 6px 14px;
+}
+.hero-panel.rival { border-color: #5a2a33; background: #2a1620; }
+.hero-panel.targetable { border-color: #ff5d73; box-shadow: 0 0 0 3px rgba(255,93,115,.55), 0 0 22px rgba(255,93,115,.5); animation: pulse 1s infinite; cursor: pointer; }
+.portrait {
+  width: 52px; height: 52px; flex: none; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: Georgia, serif; font-size: 28px; font-weight: bold; color: #241d16;
+  background: radial-gradient(circle at 35% 30%, #ffe9a8, #f5b83d 60%, #b98a1d);
+  border: 2px solid #f5d67a;
+}
+.rival .portrait { background: radial-gradient(circle at 35% 30%, #f3c1cb, #a13a4d 60%, #5f1f2c); color: #ffe9ec; border-color: #e58a99; }
+.hero-info { min-width: 0; }
+.hero-name { font-family: Georgia, serif; font-size: 21px; font-weight: bold; line-height: 1.1; }
+.hero-title { font-size: 12px; color: #9a8fc0; }
+.hero-life { display: flex; align-items: baseline; gap: 4px; margin-left: auto; }
+.heart { color: #ff5d73; font-size: 26px; line-height: 1; }
+.life-num { font-size: 34px; font-weight: 800; line-height: 1; }
+.life-max { font-size: 15px; color: #9a8fc0; }
+.hero-mana { display: flex; align-items: center; gap: 6px; }
+.mana-label { font-size: 11px; letter-spacing: 2px; color: #9a8fc0; }
+.mana-pips { display: flex; gap: 3px; }
+.mana-pip { width: 13px; height: 13px; transform: rotate(45deg); background: #2c2547; border: 1px solid #4a3f7d; }
+.mana-pip.on { background: #4aa8ff; border-color: #bfe0ff; box-shadow: 0 0 6px #4aa8ff; }
+.mana-num { font-size: 15px; font-weight: 700; color: #bfe0ff; }
+.deck-count { font-size: 13px; color: #9a8fc0; white-space: nowrap; }
+
+/* --- hands and tables -------------------------------------------------- */
+.hand-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex: none; }
+#rival-hand { height: 92px; }
+#player-hand { height: 186px; padding-bottom: 6px; }
+.table-row {
+  height: 152px; flex: none; display: flex; align-items: center; justify-content: center; gap: 12px;
+  border-top: 1px dashed rgba(201,162,39,.35); border-bottom: 1px dashed rgba(201,162,39,.35);
+  background: rgba(0,0,0,.12);
+}
+.empty-table { color: rgba(242,234,216,.45); font-style: italic; font-size: 14px; }
+.empty-hand { color: rgba(242,234,216,.45); font-style: italic; font-size: 14px; }
+.hand-count { font-size: 13px; color: #9a8fc0; margin-left: 6px; }
+
+/* --- cards ------------------------------------------------------------- */
+.card {
+  position: relative; width: 118px; height: 164px; flex: none;
+  background: linear-gradient(180deg, #fbf5e4, #f0e4c8);
+  border: 2px solid #d8c9a3; border-radius: 10px; color: #241d16;
+  box-shadow: 0 4px 10px rgba(0,0,0,.45);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.card.small { width: 104px; height: 146px; }
+#player-hand .card { width: 124px; height: 176px; margin-left: -14px; cursor: pointer; }
+#player-hand .card:first-child { margin-left: 0; }
+#player-hand .card:hover { transform: translateY(-16px) scale(1.05); z-index: 5; }
+.card.playable { box-shadow: 0 0 0 2px rgba(245,184,61,.0), 0 4px 10px rgba(0,0,0,.45); }
+#player-hand .card.playable { border-color: #f5b83d; }
+#player-hand .card:not(.playable) { filter: saturate(.55) brightness(.82); }
+.card.selected { transform: translateY(-18px) scale(1.06); box-shadow: 0 0 0 3px #f5b83d, 0 10px 22px rgba(0,0,0,.6); z-index: 6; }
+.minion { cursor: default; }
+.minion.ready { box-shadow: 0 0 0 2px rgba(120,220,130,.85), 0 4px 10px rgba(0,0,0,.45); cursor: pointer; }
+.minion.ready:hover { transform: translateY(-6px); }
+.minion.sleeping { filter: saturate(.6) brightness(.88); }
+.minion.targetable { box-shadow: 0 0 0 3px #ff5d73, 0 0 18px rgba(255,93,115,.7); animation: pulse 1s infinite; cursor: pointer; }
+.minion.selected { box-shadow: 0 0 0 3px #f5b83d, 0 0 20px rgba(245,184,61,.7); transform: translateY(-6px); }
+.minion.just-played { animation: deal-in .35s ease; }
+@keyframes deal-in { from { transform: translateY(-34px) scale(.92); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+@keyframes pulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.25); } }
+
+.cost {
+  position: absolute; top: -8px; left: -8px; width: 30px; height: 30px; z-index: 2;
+  border-radius: 50%; background: radial-gradient(circle at 35% 30%, #9fd0ff, #2f7fd0 65%, #1c4f86);
+  border: 2px solid #d8ecff; color: #fff; font-size: 17px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  text-shadow: 0 1px 2px rgba(0,0,0,.5);
+}
+.card-head { display: flex; align-items: center; gap: 6px; padding: 7px 8px 0 26px; }
+.card-name { font-family: Georgia, serif; font-size: 14px; font-weight: bold; line-height: 1.05; }
+.card.small .card-name { font-size: 13px; }
+.card-art {
+  margin: 6px 8px 0; height: 62px; border-radius: 6px; position: relative;
+  background: radial-gradient(circle at 50% 42%, var(--suit) 0%, var(--suit-dark) 78%);
+  border: 1px solid rgba(0,0,0,.25);
+  display: flex; align-items: center; justify-content: center;
+}
+.card.small .card-art { height: 64px; }
+/* Table minions show name, art, values and keyword badge; the full rules text
+   lives on the hand cards, where the decisions are made. */
+.card.small .card-text { display: none; }
+.art-suit {
+  position: absolute; bottom: 3px; right: 6px; font-size: 9px; letter-spacing: 2px;
+  color: rgba(255,255,255,.85); font-weight: 700;
+}
+.card-text {
+  margin: 6px 9px 0; font-size: 11.5px; line-height: 1.25; font-style: italic; color: #4a3f30;
+  min-height: 42px;
+}
+.card.small .card-text { font-size: 11px; min-height: 38px; }
+.card-stats { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; }
+.stat {
+  position: absolute; bottom: -6px; width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.55);
+  border: 2px solid rgba(255,255,255,.85);
+}
+.stat.atk { left: -6px; background: radial-gradient(circle at 35% 30%, #ff9d7a, #d63c1e 65%, #8f1d22); }
+.stat.hp { right: -6px; background: radial-gradient(circle at 35% 30%, #8fd6a0, #2e8b47 65%, #1e5c2e); }
+.stat.hp.hurt { background: radial-gradient(circle at 35% 30%, #ffb1a8, #d63c1e 65%, #8f1d22); }
+.card-badge {
+  position: absolute; top: -8px; right: -6px; z-index: 2;
+  background: #241d16; color: #f5b83d; font-size: 9px; font-weight: 800; letter-spacing: 1px;
+  padding: 3px 6px; border-radius: 8px; border: 1px solid #f5b83d;
+}
+
+/* suit pips: one shape per suit */
+.pip { display: inline-block; flex: none; }
+.pip-head { width: 16px; height: 16px; }
+.pip-art { width: 40px; height: 40px; filter: drop-shadow(0 2px 3px rgba(0,0,0,.4)); }
+.pip-back { width: 26px; height: 26px; opacity: .9; }
+.pip-triangle { background: var(--suit); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.pip-droplet { background: var(--suit); border-radius: 0 50% 50% 50%; transform: rotate(45deg); }
+.pip-diamond { background: var(--suit); transform: rotate(45deg); }
+.pip-star { background: var(--suit); clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+
+/* rival card backs */
+.rival-hand { display: flex; align-items: center; justify-content: center; }
+.card-back {
+  width: 62px; height: 88px; flex: none; border-radius: 8px; margin-left: -14px;
+  background: linear-gradient(160deg, #3a2b55, #241a38);
+  border: 2px solid #c9a227;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,.45);
+}
+.card-back:first-child { margin-left: 0; }
+.card-back:nth-child(odd) { transform: rotate(-3deg); }
+.card-back:nth-child(even) { transform: rotate(2deg); }
+
+/* --- middle bar -------------------------------------------------------- */
+#mid-bar {
+  height: 76px; flex: none; display: flex; align-items: center; gap: 16px; padding: 0 18px;
+}
+#log { flex: 1; min-width: 0; font-size: 13px; line-height: 1.35; color: #cfc6ec; }
+.log-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.log-line:first-child { color: #f2ead8; font-weight: 600; }
+#turn-label { font-family: Georgia, serif; font-size: 17px; font-weight: bold; color: #f5d67a; white-space: nowrap; }
+#end-turn {
+  flex: none; font: 700 16px system-ui, sans-serif; color: #241d16;
+  background: #8a7a52; border: 2px solid #6b5d49; border-radius: 10px; padding: 10px 22px; cursor: not-allowed;
+}
+#end-turn.ready { background: linear-gradient(180deg, #ffe9a8, #c9a227); border-color: #f5d67a; cursor: pointer; box-shadow: 0 0 14px rgba(245,184,61,.45); }
+#end-turn.ready:hover { filter: brightness(1.08); }
+
+/* --- turn banner ------------------------------------------------------- */
+#banner {
+  position: absolute; left: 0; right: 0; top: 330px; text-align: center; z-index: 20;
+  font-family: Georgia, serif; font-size: 54px; font-weight: bold; letter-spacing: 10px;
+  color: #ffd75e; text-shadow: 0 0 24px rgba(245,184,61,.8), 0 3px 0 rgba(0,0,0,.6);
+  opacity: 0; pointer-events: none; transition: opacity .3s ease;
+}
+#banner.show { opacity: 1; }
+
+/* --- overlays: title and end screens ----------------------------------- */
+.overlay {
+  position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 50% 40%, rgba(20,16,42,.88), rgba(10,6,26,.96));
+  backdrop-filter: blur(2px);
+}
+.overlay.hidden { display: none; }
+.title-panel { text-align: center; max-width: 760px; padding: 20px; }
+.title-kicker { letter-spacing: 5px; font-size: 14px; color: #c9a227; font-weight: 700; }
+.title {
+  font-family: Georgia, serif; font-size: 84px; line-height: .95; margin: 8px 0 4px;
+  color: #ffd75e; text-shadow: 0 0 30px rgba(245,184,61,.55), 0 4px 0 #7a5c10;
+}
+.title-cards { display: flex; justify-content: center; gap: 14px; margin: 14px 0 6px; }
+.title-cards .card { transform: rotate(-4deg); }
+.title-cards .card:nth-child(2) { transform: translateY(-10px); }
+.title-cards .card:nth-child(3) { transform: rotate(4deg); }
+.title-blurb { font-size: 16px; line-height: 1.5; color: #e6ddc8; margin: 10px auto; max-width: 620px; }
+.howto { font-size: 13.5px; line-height: 1.7; color: #b9aed6; margin: 8px auto 16px; max-width: 640px; text-align: left; display: inline-block; }
+.howto b { color: #f5d67a; }
+#start-btn, #again-btn {
+  font: 800 20px system-ui, sans-serif; color: #241d16; cursor: pointer;
+  background: linear-gradient(180deg, #ffe9a8, #c9a227); border: 2px solid #f5d67a; border-radius: 12px;
+  padding: 14px 38px; box-shadow: 0 6px 22px rgba(245,184,61,.4);
+}
+#start-btn:hover, #again-btn:hover { filter: brightness(1.08); }
+.best-line { margin-top: 12px; font-size: 13px; color: #9a8fc0; }
+.end-title { font-family: Georgia, serif; font-size: 92px; line-height: 1; margin: 0 0 10px; letter-spacing: 6px; }
+.end-title.win { color: #ffd75e; text-shadow: 0 0 34px rgba(245,184,61,.7), 0 4px 0 #7a5c10; }
+.end-title.loss { color: #ff8fa0; text-shadow: 0 0 34px rgba(229,72,77,.6), 0 4px 0 #5f1f2c; }
+.end-stats { font-size: 15px; color: #b9aed6; margin-bottom: 18px; }
+
+/* In screenshot mode every animation is frozen, so the frame is stable. */
+body.shot * { animation: none !important; transition: none !important; }
